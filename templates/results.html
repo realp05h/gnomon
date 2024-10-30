@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculation Results</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='/styles.css') }}">
+</head>
+<body>
+    <h1>GNOMON</h1>
+    <h2>Results</h2>
+    
+    <h2>Global Projection:</h2>
+    <img src="{{ url_for('static', filename='map.png') }}" alt="Map">
+
+    <h2>Possible Countries:</h2>
+    <ul>
+        {% for country in calculations.countries %}
+            <li>{{ country }}</li>
+        {% endfor %}
+    </ul>
+    
+    <h2>Country Predictions:</h2>
+    <p>{{ calculations.gpt_analysis }}</p>
+   
+    
+    <h2>Calculated Locations:</h2>
+    <ul>
+        {% for lat, lon in calculations.locations %}
+        <li>{{ lat }}, {{ lon }}</li>
+        {% endfor %}
+    </ul>
+
+</body>
+</html>z

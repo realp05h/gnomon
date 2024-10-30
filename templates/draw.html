@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Draw on Image</title>
+    <style>
+        #imageCanvas {
+            border: 1px solid black;
+            cursor: crosshair;
+        }
+    </style>
+</head>
+<body>
+    <h1>GNOMON</h1>
+    <h2>Draw Lines on the Image</h2>
+    <p>
+    1st click should be the top of the object casting the shadow.<br> 
+    2nd click (vertically below the 1st click) should be the base of that object and forms the blue object line.<br> 
+    3rd click should be placed at the end of the shadow cast by the object. This forms the red shadow line.<br> 
+    </p>
+    <link rel="stylesheet" href="{{ url_for('static', filename='/styles.css') }}">
+    <canvas id="imageCanvas"></canvas>
+    <br>
+    <button id="clearButton">Clear Lines & Start Over</button>
+    <form action="{{ url_for('results') }}" method="POST">
+        <input type="hidden" name="filename" value="{{ filename }}">
+        <input type="hidden" id="heightLength" name="heightLength">
+        <input type="hidden" id="shadowLength" name="shadowLength">
+        <label for="dateTime">Select Date and Time:</label>
+        <input type="datetime-local" id="dateTime" name="dateTime" required>
+        <button type="submit">Submit</button>
+    </form>
+    <script>
+        const canvas = document.getElementById('imageCanvas');
+        const ctx = canvas.getContext('2d');
+        const img = new Image();
+        img.src = "/static/uploads/{{ filename }}";
+        
+        img.onload = function() {
+            canvas.width = img.width;
+            canvas.height = img.height;
+            ctx.drawImage(img, 0, 0);
+        }
+
+        let points = [];
+        let clicks = 0;
+
+        // Function to calculate the distance between two points
+        function calculateDistance(p1, p2) {
+            return Math.sqrt(Math.pow(p2.x - p1.x, 2) + Math.pow(p2.y - p1.y, 2));
+        }
+
+        // Function to calculate the angle between two vectors (in radians)
+        function calculateAngle(p1, p2, p3) {
+            const vectorA = { x: p2.x - p1.x, y: p2.y - p1.y };
+            const vectorB = { x: p3.x - p2.x, y: p3.y - p2.y };
+            const dotProduct = vectorA.x * vectorB.x + vectorA.y * vectorB.y;
+            const magA = Math.sqrt(vectorA.x ** 2 + vectorA.y ** 2);
+            const magB = Math.sqrt(vectorB.x ** 2 + vectorB.y ** 2);
+            return Math.acos(dotProduct / (magA * magB));
+        }
+
+        // Function to correct the shadow length
+        function correctShadowLength(observedShadowLength, angleRad) {
+            return observedShadowLength / Math.sin(angleRad);
+        }
+
+        // Event listener for clicks on the canvas
+        canvas.addEventListener('click', function(event) {
+            const rect = canvas.getBoundingClientRect();
+            const x = event.clientX - rect.left;
+            const y = event.clientY - rect.top;
+            
+            points.push({ x, y });
+            clicks++;
+
+            if (clicks === 1) {
+                // Start of the blue line
+                ctx.strokeStyle = 'blue';
+                ctx.lineWidth = 5;
+                ctx.beginPath();
+                ctx.moveTo(x, y);
+            } else if (clicks === 2) {
+                // End of the blue line and start of the red line
+                ctx.lineTo(x, y);
+                ctx.stroke();
+
+                ctx.strokeStyle = 'red';
+                ctx.beginPath();
+                ctx.moveTo(x, y);
+            } else if (clicks === 3) {
+                // End of the red line
+                ctx.lineTo(x, y);
+                ctx.stroke();
+
+                // Calculate the height length and observed shadow length
+                const heightLength = calculateDistance(points[0], points[1]);
+                const observedShadowLength = calculateDistance(points[1], points[2]);
+
+                // Calculate the angle between the object and shadow lines
+                const angleRad = calculateAngle(points[0], points[1], points[2]);
+
+                // Correct the shadow length
+                const correctedShadowLength = correctShadowLength(observedShadowLength, angleRad);
+
+                // Update the hidden form fields with the corrected values
+                document.getElementById('heightLength').value = heightLength;
+                document.getElementById('shadowLength').value = correctedShadowLength;
+            }
+        });
+
+        document.getElementById('clearButton').addEventListener('click', function() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.drawImage(img, 0, 0);
+            points = [];
+            clicks = 0;
+        });
+    </script>
+</body>
+</html>
