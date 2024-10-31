@@ -36,7 +36,7 @@ Follow the instructions to construct your lines.
 
 The example image below was taken on a summer’s day in a deeply rural area of the South West of France (where I was at the time of building this app). It’s a good example for us to use as there is a clear shadow cast at nearly a right angle from the chair. There are also no clearly definable features or landmarks which would  make it easy to identify where this image was taken (we’ll really be putting this app to the test!).
 
-You’ll also need to enter the date and time that the photo was taken as accurately as possible. If you can extract EXIF data from the image, then all good (https://exif.tools/). If you can’t get a time and date for the image, the calculations generated from the shadow will not be accurate and the app’s results will essentially be useless. Although, if you’re pulling the image from certain socials, then in some cases you can be fairly sure that the uplaod time is close to when the image was taken.
+You’ll also need to enter the date and time that the photo was taken as accurately as possible. If you can extract EXIF data from the image, then all good (https://exif.tools/). If you can’t get a time and date for the image, the calculations generated from the shadow will not be accurate and the app’s results will essentially be useless. Although, if you’re pulling the image from certain socials, then in some cases you can be fairly sure that the upload time is close to when the image was taken.
 
 Once you have the lines drawn and the date / time entered, go ahead and press ‘Submit’. It can take up to 20s or so to generate the results.
 
@@ -48,7 +48,11 @@ The first thing you’ll see is a global projection of possible locations the pi
 
 ![gnomon results page 1](https://github.com/realp05h/gnomon/blob/main/example/3.png)
 
-The app then identifies which countries the ring intersects and sends the image and that country shortlist to Anthropic’s Claude for analysis.
+The app then identifies which countries the ring intersects and sends the image and that country shortlist to Anthropic’s Claude for analysis.   BINGO! It got it right with 85% certainty! :)
+
+Claude will return the three most likely locations based on the country shortlist with the rationale for its choices. Interestingly, Claude will very rarely give an accurate answer if you just send it the picture alone and ask it what it thinks. By marrying together the likely countries as well as the image it nearly always gives a correct answer. What’s more, if you actually check the calculated locations (listed below the prediction), it comes VERY close to where this picture was actually taken in France. 
+
+So long as your initial lines are accurate as possible and the app can reasonably infer the location of the sun when the picture was taken, then you should always get pretty good results.
 
 ![gnomon results page 2](https://github.com/realp05h/gnomon/blob/main/example/4.png)
 
