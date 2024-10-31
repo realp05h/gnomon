@@ -48,7 +48,9 @@ The first thing you’ll see is a global projection of possible locations the pi
 
 ![gnomon results page 1](https://github.com/realp05h/gnomon/blob/main/example/3.png)
 
-The app then identifies which countries the ring intersects and sends the image and that country shortlist to Anthropic’s Claude for analysis.   BINGO! It got it right with 85% certainty! :)
+The app then identifies which countries the ring intersects and sends the image and that country shortlist to Anthropic’s Claude for analysis. 
+
+BINGO! It got it right with 85% certainty! :)
 
 Claude will return the three most likely locations based on the country shortlist with the rationale for its choices. Interestingly, Claude will very rarely give an accurate answer if you just send it the picture alone and ask it what it thinks. By marrying together the likely countries as well as the image it nearly always gives a correct answer. What’s more, if you actually check the calculated locations (listed below the prediction), the arc comes VERY close to where this picture was taken in France. 
 
