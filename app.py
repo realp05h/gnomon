@@ -20,10 +20,11 @@
 
 # REPLACE THESE WITH YOU ACTUAL CREDENTIALS 
 
-#AWS E3 Creds:
+#AWS S3 Creds:
 aws_access_key_id = ''
 aws_secret_access_key = ''
-region_name = ''  # Ensure this is the correct region for your bucket eg. 'eu-north-1'
+aws_bucket_name = ''
+aws_region_name = ''  # Ensure this is the correct region for your bucket eg. 'eu-north-1'
 #Anthropic API Key:
 anthropic_api_key = ''
 
@@ -129,7 +130,7 @@ def get_countries_from_locations(locations):
 
 def upload_to_s3(file_path, bucket_name, object_name=None):
     s3 = boto3.client('s3', 
-                      region_name=region_name,
+                      region_name=aws_region_name,
                       aws_access_key_id=aws_access_key_id,
                       aws_secret_access_key=aws_secret_access_key)
     
@@ -138,7 +139,7 @@ def upload_to_s3(file_path, bucket_name, object_name=None):
 
     try:
         s3.upload_file(file_path, bucket_name, object_name)
-        url = f"https://{bucket_name}.s3.{region_name}.amazonaws.com/{object_name}"
+        url = f"https://{bucket_name}.s3.{aws_region_name}.amazonaws.com/{object_name}"
         print(f"Upload successful: {url}")
         return url
     except FileNotFoundError:
@@ -224,7 +225,7 @@ def results():
     countries = get_countries_from_locations(locations)
 
     image_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
-    image_url = upload_to_s3(image_path, "gnomontestbucket")
+    image_url = upload_to_s3(image_path, aws_bucket_name)
 
     if image_url:
         gpt_response = analyze_image_with_claude(image_url, countries)
